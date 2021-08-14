@@ -61,3 +61,24 @@ impl IndexMut<usize> for Strip {
         &mut self.pixelbuf[index]
     }
 }
+
+//mutable iterator, wrapping vec
+impl<'a> IntoIterator for &'a mut Strip {
+    type Item = &'a mut Pixel;
+
+    type IntoIter = IterMut<'a, Pixel>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.pixelbuf.iter_mut()
+    }
+}
+
+//immutable iterator
+impl<'a> IntoIterator for &'a Strip {
+    type Item = &'a Pixel;
+    type IntoIter = Iter<'a, Pixel>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.pixelbuf.iter()
+    }
+}
