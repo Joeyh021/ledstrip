@@ -1,4 +1,6 @@
+use std::fmt::format;
 use std::ops::{Index, IndexMut};
+use std::slice::{Iter, IterMut};
 use std::vec;
 
 type Pixel = (u8, u8, u8);
@@ -7,7 +9,7 @@ type Pixel = (u8, u8, u8);
 pub struct Strip {
     pixelbuf: Vec<Pixel>,
     len: usize,
-    freq: u64,
+    freq: u32,
     one: u8,
     zero: u8,
 }
@@ -26,7 +28,7 @@ impl Default for Strip {
 }
 
 impl Strip {
-    fn new(len: usize) -> Self {
+    pub fn new(len: usize) -> Self {
         Self {
             pixelbuf: vec![(0, 0, 0); len],
             len,
@@ -34,16 +36,30 @@ impl Strip {
         }
     }
 
-    fn rotate_left(&mut self) {
+    pub fn rotate_left(&mut self) {
         self.pixelbuf.rotate_left(1);
     }
 
-    fn rotate_right(&mut self) {
+    pub fn rotate_right(&mut self) {
         self.pixelbuf.rotate_right(1)
     }
 
-    fn update(&self) {
+    pub fn update(&self) {
         todo!()
+        //write spi interface code
+    }
+
+    fn to_spi_bytes(&self) {
+        let mut buffer: Vec<u8> = vec![0; 24 * self.len];
+        for (r, g, b) in &self.pixelbuf {
+            let bits = g << 16 | r << 8 | b;
+            for bit in 0..23 {
+                buffer.push(match bits & (1 << bit) {
+                    0 => self.zero,
+                    _ => self.one,
+                })
+            }
+        }
     }
 }
 
