@@ -2,6 +2,7 @@ use rppal::spi::Spi;
 use std::ops::{Index, IndexMut};
 use std::slice::{Iter, IterMut};
 use std::vec;
+use std::{thread, time};
 
 pub type Pixel = (u8, u8, u8);
 
@@ -35,6 +36,8 @@ impl<'a> Strip<'a> {
 
     pub fn update(&mut self) {
         self.spi_device.write(&self.to_spi_bytes()).unwrap();
+        //sleep for enough time to lock in the colours
+        thread::sleep(time::Duration::from_micros(50));
     }
 
     fn to_spi_bytes(&self) -> Vec<u8> {
