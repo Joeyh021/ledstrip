@@ -40,8 +40,8 @@ impl<'a> Strip<'a> {
     fn to_spi_bytes(&self) -> Vec<u8> {
         let mut buffer: Vec<u8> = Vec::new();
         for (r, g, b) in &self.pixelbuf {
-            let bits = g << 16 | r << 8 | b;
-            for bit in 0..23 {
+            let bits: u32 = (*b as u32) << 16 | (*r as u32) << 8 | (*g as u32);
+            for bit in 0..24 {
                 buffer.push(match bits & (1 << bit) {
                     0 => self.zero,
                     _ => self.one,
