@@ -1,38 +1,27 @@
-use std::fmt::format;
+use rppal::spi::Spi;
 use std::ops::{Index, IndexMut};
 use std::slice::{Iter, IterMut};
 use std::vec;
 
-type Pixel = (u8, u8, u8);
+pub type Pixel = (u8, u8, u8);
 
 #[derive(Debug)]
-pub struct Strip {
+pub struct Strip<'a> {
     pixelbuf: Vec<Pixel>,
     len: usize,
-    freq: u32,
     one: u8,
     zero: u8,
+    spi_device: &'a mut Spi, //Strip should hold mutable ref to spi device
 }
 
-//default values for ws2812b lightstrip
-impl Default for Strip {
-    fn default() -> Self {
-        Self {
-            pixelbuf: vec![],
-            len: 0,
-            freq: 6400000,
-            one: 0b11110000,
-            zero: 0b11000000,
-        }
-    }
-}
-
-impl Strip {
-    pub fn new(len: usize) -> Self {
+impl<'a> Strip<'a> {
+    pub fn new(len: usize, spi: &'a mut Spi) -> Self {
         Self {
             pixelbuf: vec![(0, 0, 0); len],
             len,
-            ..Default::default()
+            one: 0b1111_0000,
+            zero: 0b1100_0000,
+            spi_device: spi,
         }
     }
 
@@ -41,16 +30,15 @@ impl Strip {
     }
 
     pub fn rotate_right(&mut self) {
-        self.pixelbuf.rotate_right(1)
+        self.pixelbuf.rotate_right(1);
     }
 
-    pub fn update(&self) {
-        todo!()
-        //write spi interface code
+    pub fn update(&mut self) {
+        self.spi_device.write(&self.to_spi_bytes()).unwrap();
     }
 
-    fn to_spi_bytes(&self) {
-        let mut buffer: Vec<u8> = vec![0; 24 * self.len];
+    fn to_spi_bytes(&self) -> Vec<u8> {
+        let mut buffer: Vec<u8> = Vec::new();
         for (r, g, b) in &self.pixelbuf {
             let bits = g << 16 | r << 8 | b;
             for bit in 0..23 {
@@ -60,11 +48,16 @@ impl Strip {
                 })
             }
         }
+        return buffer;
+    }
+    pub fn push(&mut self, col: Pixel) {
+        self.pixelbuf.rotate_right(1);
+        self.pixelbuf[0] = col;
     }
 }
 
 // Indexing operators for the lightstrip
-impl Index<usize> for Strip {
+impl Index<usize> for Strip<'_> {
     type Output = Pixel;
 
     fn index(&self, index: usize) -> &Self::Output {
@@ -72,14 +65,14 @@ impl Index<usize> for Strip {
     }
 }
 
-impl IndexMut<usize> for Strip {
+impl IndexMut<usize> for Strip<'_> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.pixelbuf[index]
     }
 }
 
 //mutable iterator, wrapping vec
-impl<'a> IntoIterator for &'a mut Strip {
+impl<'a> IntoIterator for &'a mut Strip<'_> {
     type Item = &'a mut Pixel;
 
     type IntoIter = IterMut<'a, Pixel>;
@@ -90,7 +83,7 @@ impl<'a> IntoIterator for &'a mut Strip {
 }
 
 //immutable iterator
-impl<'a> IntoIterator for &'a Strip {
+impl<'a> IntoIterator for &'a Strip<'_> {
     type Item = &'a Pixel;
     type IntoIter = Iter<'a, Pixel>;
 
