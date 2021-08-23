@@ -28,7 +28,7 @@ impl Solid {
 }
 
 impl StripController for Solid {
-    const DELAY: u64 = 1000;
+    const DELAY: u64 = 100;
 
     fn tick(&self, lights: &mut Strip) {
         lights.push(self.colour);
