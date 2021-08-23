@@ -32,6 +32,7 @@ impl StripController for Solid {
 
     fn tick(&self, lights: &mut Strip) {
         lights.push(self.colour);
+        lights.update();
     }
 }
 
@@ -55,7 +56,15 @@ impl Sequence {
 
 impl StripController for Sequence {
     fn tick(&self, lights: &mut Strip) {
-        lights.push(self.colours[*self.next.borrow()]);
-        self.next.replace_with(|x| *x + 1);
+        let index = self.next.take();
+        lights.push(self.colours[index]);
+        self.next.replace_with(|_| {
+            if index + 1 == self.colours.len() {
+                0
+            } else {
+                index + 1
+            }
+        });
+        lights.update();
     }
 }
