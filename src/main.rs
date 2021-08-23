@@ -1,4 +1,6 @@
+pub mod controllers;
 mod lights;
+
 use lights::{colour, controller::Solid, StripController};
 use rppal::spi::{Bus, Mode, SlaveSelect, Spi};
 use std::{thread, time};
