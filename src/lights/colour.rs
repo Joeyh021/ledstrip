@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use crate::lightstrip::Pixel;
+use super::Pixel;
 
 pub const RED: Pixel = (255, 0, 0);
 pub const ORANGE: Pixel = (255, 127, 0);

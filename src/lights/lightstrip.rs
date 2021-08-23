@@ -1,22 +1,22 @@
+use super::Pixel;
 use rppal::spi::Spi;
 use std::ops::{Index, IndexMut};
 use std::slice::{Iter, IterMut};
 use std::vec;
 use std::{thread, time};
 
-pub type Pixel = (u8, u8, u8);
-
+//Represents the lightstrip itself
 #[derive(Debug)]
-pub struct Strip<'a> {
+pub struct Strip {
     pixelbuf: Vec<Pixel>,
     len: usize,
     one: u8,
     zero: u8,
-    spi_device: &'a mut Spi, //Strip should hold mutable ref to spi device
+    spi_device: Spi, //Strip should hold mutable ref to spi device
 }
 
-impl<'a> Strip<'a> {
-    pub fn new(len: usize, spi: &'a mut Spi) -> Self {
+impl Strip {
+    pub fn new(len: usize, spi: Spi) -> Self {
         Self {
             pixelbuf: vec![(0, 0, 0); len],
             len,
@@ -24,14 +24,6 @@ impl<'a> Strip<'a> {
             zero: 0b1100_0000,
             spi_device: spi,
         }
-    }
-
-    pub fn rotate_left(&mut self) {
-        self.pixelbuf.rotate_left(1);
-    }
-
-    pub fn rotate_right(&mut self) {
-        self.pixelbuf.rotate_right(1);
     }
 
     pub fn update(&mut self) {
@@ -69,10 +61,14 @@ impl<'a> Strip<'a> {
         self.pixelbuf.rotate_right(1);
         self.pixelbuf[0] = col;
     }
+
+    pub fn set(&mut self, col: Pixel) {
+        self.pixelbuf = vec![col; self.len];
+    }
 }
 
 // Indexing operators for the lightstrip
-impl Index<usize> for Strip<'_> {
+impl Index<usize> for Strip {
     type Output = Pixel;
 
     fn index(&self, index: usize) -> &Self::Output {
@@ -80,14 +76,14 @@ impl Index<usize> for Strip<'_> {
     }
 }
 
-impl IndexMut<usize> for Strip<'_> {
+impl IndexMut<usize> for Strip {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.pixelbuf[index]
     }
 }
 
 //mutable iterator, wrapping vec
-impl<'a> IntoIterator for &'a mut Strip<'_> {
+impl<'a> IntoIterator for &'a mut Strip {
     type Item = &'a mut Pixel;
 
     type IntoIter = IterMut<'a, Pixel>;
@@ -98,7 +94,7 @@ impl<'a> IntoIterator for &'a mut Strip<'_> {
 }
 
 //immutable iterator
-impl<'a> IntoIterator for &'a Strip<'_> {
+impl<'a> IntoIterator for &'a Strip {
     type Item = &'a Pixel;
     type IntoIter = Iter<'a, Pixel>;
 
