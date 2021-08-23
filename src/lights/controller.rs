@@ -18,8 +18,11 @@ pub struct Solid {
 }
 
 impl Solid {
-    pub fn new(name: String, colour: Pixel) -> Self {
-        Self { name, colour }
+    pub fn new(name: &str, colour: Pixel) -> Self {
+        Self {
+            name: name.to_string(),
+            colour,
+        }
     }
 
     pub fn name(&self) -> &str {
@@ -45,9 +48,9 @@ pub struct Sequence {
 }
 
 impl Sequence {
-    pub fn new(name: String, sequence: &[Pixel]) -> Self {
+    pub fn new(name: &str, sequence: &[Pixel]) -> Self {
         Self {
-            name,
+            name: name.to_string(),
             colours: sequence.to_vec(),
             next: RefCell::new(0),
         }
