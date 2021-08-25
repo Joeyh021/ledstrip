@@ -65,6 +65,10 @@ impl Strip {
     pub fn set(&mut self, col: Pixel) {
         self.pixelbuf = vec![col; self.len];
     }
+
+    pub fn off(&mut self) {
+        self.set(super::colour::OFF);
+    }
 }
 
 // Indexing operators for the lightstrip
