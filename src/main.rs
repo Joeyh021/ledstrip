@@ -11,6 +11,9 @@ use std::thread;
 
 use rppal::spi::{Bus, Mode, SlaveSelect, Spi};
 
+#[macro_use]
+extern crate rocket;
+
 fn main() {
     let controller = Sequence::new("Rainbow", &[colour::RED, colour::GREEN, colour::BLUE]);
     let mut strip = Strip::new(
@@ -18,6 +21,7 @@ fn main() {
         Spi::new(Bus::Spi0, SlaveSelect::Ss0, 6_400_000, Mode::Mode0)
             .expect("Could not access SPI device"),
     );
+
     let (tx, rx) = mpsc::channel();
     thread::spawn(move || controller.run(&mut strip, rx));
     thread::sleep(std::time::Duration::from_secs(5));
