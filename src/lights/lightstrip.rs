@@ -66,6 +66,10 @@ impl Strip {
         self.pixelbuf = vec![col; self.len];
     }
 
+    pub fn on(&mut self) {
+        self.set(super::colour::WHITE);
+    }
+
     pub fn off(&mut self) {
         self.set(super::colour::OFF);
     }
