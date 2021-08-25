@@ -1,13 +1,26 @@
 use std::cell::RefCell;
 
-use super::{lightstrip::Strip, Pixel};
+use crate::lights::{Pixel, Strip};
+use std::sync::mpsc::Receiver;
+use std::thread;
+use std::time;
+
 //the strip controller trait
 //any implementing type must define a `tick` function and a period in ms
 //that defines what to do on each tick, and how long the period of each tick is
-
-pub trait StripController {
+pub trait StripController: Send {
     const DELAY: u64 = 100;
     fn tick(&self, lights: &mut Strip);
+
+    fn run(&self, lights: &mut Strip, rx: Receiver<bool>) {
+        loop {
+            self.tick(lights);
+            thread::sleep(time::Duration::from_millis(Solid::DELAY));
+            if let Ok(true) = rx.try_recv() {
+                break;
+            }
+        }
+    }
 }
 
 //A solid strip controller
