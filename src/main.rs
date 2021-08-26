@@ -11,9 +11,6 @@ use std::thread;
 
 use rppal::spi::{Bus, Mode, SlaveSelect, Spi};
 
-#[macro_use]
-extern crate rocket;
-
 fn main() {
     let controller = Sequence::new("Rainbow", &[colour::RED, colour::GREEN, colour::BLUE]);
     let mut strip = Strip::new(
