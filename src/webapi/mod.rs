@@ -1,9 +1,8 @@
-#[get("/on")]
-pub fn on() -> &'static str {
-    "Turning lights on..."
-}
+mod routes;
+pub use routes::*;
+use std::sync::mpsc::SyncSender;
 
-#[get("/on")]
-pub fn off() -> &'static str {
-    "Turning lights off..."
+use crate::lights::Controller;
+pub struct AppState {
+    pub tx: SyncSender<Controller>,
 }
