@@ -20,7 +20,7 @@ fn main() {
                 .expect("Could not access SPI device"),
         );
         //default controller
-        let mut controller = Controller::new(lights::ControlMode::Solid, &[colour::OFF]);
+        let mut controller = Controller::new(lights::ControlMode::Solid, &[colour::RED]);
         //run until sent a new controller
         loop {
             controller = controller.run(&mut strip, &rx);
@@ -29,13 +29,4 @@ fn main() {
     thread::sleep(time::Duration::from_secs(5));
     tx.send(Controller::new(lights::ControlMode::Solid, &[colour::BLUE]))
         .unwrap();
-    thread::sleep(time::Duration::from_secs(5));
-    tx.send(Controller::new(lights::ControlMode::Solid, &[colour::RED]))
-        .unwrap();
-    thread::sleep(time::Duration::from_secs(5));
-    tx.send(Controller::new(
-        lights::ControlMode::Solid,
-        &[colour::GREEN],
-    ))
-    .unwrap();
 }

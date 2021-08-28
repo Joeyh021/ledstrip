@@ -31,14 +31,17 @@ impl Controller {
                 Err(_) => match self.mode {
                     ControlMode::Solid => {
                         lights.set(*iter.next().unwrap());
+                        lights.update();
                         thread::sleep(time::Duration::from_secs(5));
                     }
                     ControlMode::Block(delay) => {
                         lights.set(*iter.next().unwrap());
+                        lights.update();
                         thread::sleep(time::Duration::from_millis(delay));
                     }
                     ControlMode::Individual(delay) => {
                         lights.push(*iter.next().unwrap());
+                        lights.update();
                         thread::sleep(time::Duration::from_millis(delay));
                     }
                 },
