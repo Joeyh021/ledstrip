@@ -1,10 +1,10 @@
 [global]
 address = "0.0.0.0"
 
-[development]
+[debug]
 port = 8080
 log = "verbose"
 
-[production]
+[release]
 port = 80
 log = "normal"
