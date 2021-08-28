@@ -38,6 +38,9 @@ fn start() -> _ {
         .unwrap();
 
     rocket::build()
-        .mount("/", routes![webapi::on, webapi::off])
+        .mount(
+            "/",
+            routes![webapi::on, webapi::off, webapi::breathe, webapi::rainbow],
+        )
         .manage(AppState { tx })
 }
