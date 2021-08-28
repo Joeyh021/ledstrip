@@ -6,6 +6,7 @@ use lights::Controller;
 use lights::Strip;
 use std::sync::mpsc;
 use std::thread;
+use std::time;
 
 use rppal::spi::{Bus, Mode, SlaveSelect, Spi};
 
@@ -19,10 +20,22 @@ fn main() {
                 .expect("Could not access SPI device"),
         );
         //default controller
-        let mut controller = Controller::new(lights::ControlMode::Solid, &[(0, 0, 0)]);
+        let mut controller = Controller::new(lights::ControlMode::Solid, &[colour::OFF]);
         //run until sent a new controller
         loop {
             controller = controller.run(&mut strip, &rx);
         }
     });
+    thread::sleep(time::Duration::from_secs(5));
+    tx.send(Controller::new(lights::ControlMode::Solid, &[colour::BLUE]))
+        .unwrap();
+    thread::sleep(time::Duration::from_secs(5));
+    tx.send(Controller::new(lights::ControlMode::Solid, &[colour::RED]))
+        .unwrap();
+    thread::sleep(time::Duration::from_secs(5));
+    tx.send(Controller::new(
+        lights::ControlMode::Solid,
+        &[colour::GREEN],
+    ))
+    .unwrap();
 }
