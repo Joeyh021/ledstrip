@@ -2,9 +2,9 @@
 address = "0.0.0.0"
 
 [debug]
-port = 8080
+port = 8081
 log = "verbose"
 
 [release]
-port = 80
+port = 8080
 log = "normal"
