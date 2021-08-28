@@ -1,7 +1,8 @@
 pub mod lights;
 pub mod webapi;
 
-use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
+#[macro_use]
+extern crate rocket;
 use lights::colour;
 use lights::Controller;
 use lights::Strip;
@@ -11,8 +12,8 @@ use std::time;
 
 use rppal::spi::{Bus, Mode, SlaveSelect, Spi};
 
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
+#[launch]
+fn start() -> _ {
     let (tx, rx) = mpsc::channel::<Controller>();
     thread::spawn(move || {
         //init lights on the thread because they can't be send/sync
@@ -31,15 +32,6 @@ async fn main() -> std::io::Result<()> {
     thread::sleep(time::Duration::from_secs(5));
     tx.send(Controller::new(lights::ControlMode::Solid, &[colour::BLUE]))
         .unwrap();
-    HttpServer::new(|| App::new().service(hello))
-        .bind("127.0.0.1:8080")?
-        .run()
-        .await
-}
 
-use actix_web::{get, web, App, HttpServer, Responder};
-
-#[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
+    rocket::build().mount("/", routes![webapi::on, webapi::off])
 }
