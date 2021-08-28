@@ -41,7 +41,7 @@ pub fn breathe(state: &State<AppState>) -> &'static str {
     }
     state
         .tx
-        .send(Controller::new(ControlMode::Solid, &cols))
+        .send(Controller::new(ControlMode::Block(5), &cols))
         .unwrap();
     "breathing"
 }
