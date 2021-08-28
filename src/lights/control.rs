@@ -30,7 +30,7 @@ impl Controller {
                     ControlMode::Solid => {
                         lights.set(self.sequence[0]);
                         lights.update();
-                        thread::sleep(time::Duration::from_secs(5));
+                        thread::sleep(time::Duration::from_millis(100));
                     }
                     ControlMode::Block(delay) => {
                         lights.set(*iter.next().unwrap());
