@@ -1,6 +1,7 @@
 pub mod lights;
 pub mod webapi;
 
+use actix_web::{get, web, App, HttpServer, Responder};
 use lights::colour;
 use lights::Controller;
 use lights::Strip;
@@ -9,6 +10,8 @@ use std::thread;
 use std::time;
 
 use rppal::spi::{Bus, Mode, SlaveSelect, Spi};
+
+#[actix_web::main]
 
 fn main() {
     let (tx, rx) = mpsc::channel::<Controller>();
@@ -29,4 +32,15 @@ fn main() {
     thread::sleep(time::Duration::from_secs(5));
     tx.send(Controller::new(lights::ControlMode::Solid, &[colour::BLUE]))
         .unwrap();
+    HttpServer::new(|| App::new().service(hello))
+        .bind("127.0.0.1:8080")?
+        .run()
+        .await
+}
+
+use actix_web::{get, web, App, HttpServer, Responder};
+
+#[get("/")]
+async fn hello() -> impl Responder {
+    HttpResponse::Ok().body("Hello world!")
 }
