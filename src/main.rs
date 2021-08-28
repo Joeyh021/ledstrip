@@ -10,7 +10,6 @@ use webapi::AppState;
 
 use std::sync::mpsc;
 use std::thread;
-use std::time;
 
 use rppal::spi::{Bus, Mode, SlaveSelect, Spi};
 
@@ -26,16 +25,12 @@ fn start() -> _ {
                 .expect("Could not access SPI device"),
         );
         //default controller
-        let mut controller = Controller::new(lights::ControlMode::Solid, &[colour::RED]);
+        let mut controller = Controller::new(lights::ControlMode::Solid, &[colour::WHITE]);
         //run until sent a new controller
         loop {
             controller = controller.run(&mut strip, &rx);
         }
     });
-
-    thread::sleep(time::Duration::from_secs(5));
-    tx.send(Controller::new(lights::ControlMode::Solid, &[colour::BLUE]))
-        .unwrap();
 
     rocket::build()
         .mount(

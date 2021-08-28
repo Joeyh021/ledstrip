@@ -28,7 +28,7 @@ impl Controller {
             match rx.try_recv() {
                 Err(_) => match self.mode {
                     ControlMode::Solid => {
-                        lights.set(*iter.next().unwrap());
+                        lights.set(self.sequence[0]);
                         lights.update();
                         thread::sleep(time::Duration::from_secs(5));
                     }
