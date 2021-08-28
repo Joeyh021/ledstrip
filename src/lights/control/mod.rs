@@ -44,6 +44,7 @@ impl Controller {
                 },
                 Ok(c) => return c,
             }
+            lights.update();
         }
     }
 }
