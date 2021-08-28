@@ -9,7 +9,6 @@ pub enum ControlMode {
 }
 
 pub struct Controller {
-    description: String,
     mode: ControlMode,
     sequence: Vec<Pixel>,
 }
@@ -17,7 +16,6 @@ pub struct Controller {
 impl Controller {
     pub fn new(mode: ControlMode, colours: &[Pixel]) -> Self {
         Self {
-            description: String::from("insert description here"),
             mode,
             sequence: colours.to_vec(),
         }
