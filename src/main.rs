@@ -1,7 +1,7 @@
 pub mod lights;
 pub mod webapi;
 
-use actix_web::{get, web, App, HttpServer, Responder};
+use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
 use lights::colour;
 use lights::Controller;
 use lights::Strip;
@@ -12,8 +12,7 @@ use std::time;
 use rppal::spi::{Bus, Mode, SlaveSelect, Spi};
 
 #[actix_web::main]
-
-async fn main() {
+async fn main() -> std::io::Result<()> {
     let (tx, rx) = mpsc::channel::<Controller>();
     thread::spawn(move || {
         //init lights on the thread because they can't be send/sync
