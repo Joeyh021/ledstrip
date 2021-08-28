@@ -13,7 +13,7 @@ use rppal::spi::{Bus, Mode, SlaveSelect, Spi};
 
 #[actix_web::main]
 
-fn main() {
+async fn main() {
     let (tx, rx) = mpsc::channel::<Controller>();
     thread::spawn(move || {
         //init lights on the thread because they can't be send/sync
