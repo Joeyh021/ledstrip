@@ -3,7 +3,7 @@ pub mod webapi;
 
 #[macro_use]
 extern crate rocket;
-use lights::colour;
+use lights::colour::*;
 use lights::Controller;
 use lights::Strip;
 use webapi::AppState;
@@ -25,7 +25,7 @@ fn start() -> _ {
                 .expect("Could not access SPI device"),
         );
         //default controller
-        let mut controller = Controller::new(lights::ControlMode::Solid, &[colour::WHITE]);
+        let mut controller = Controller::new_fixed(WHITE);
         //run until sent a new controller
         loop {
             controller = controller.run(&mut strip, &rx);
@@ -33,9 +33,6 @@ fn start() -> _ {
     });
 
     rocket::build()
-        .mount(
-            "/",
-            routes![webapi::on, webapi::off, webapi::breathe, webapi::rainbow],
-        )
+        .mount("/", routes![webapi::on, webapi::off, webapi::rainbow])
         .manage(AppState { tx })
 }

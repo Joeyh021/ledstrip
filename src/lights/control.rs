@@ -3,21 +3,34 @@ use std::sync::mpsc::Receiver;
 use std::{thread, time};
 
 pub enum ControlMode {
-    Solid,
-    Block(u64),
-    Individual(u64),
+    Fixed,
+    Block,
+    Individual,
 }
 
 pub struct Controller {
     mode: ControlMode,
     sequence: Vec<Pixel>,
+    fixed: Pixel,
+    delay: u64,
 }
 
 impl Controller {
-    pub fn new(mode: ControlMode, colours: &[Pixel]) -> Self {
+    pub fn new(mode: ControlMode, colours: &[Pixel], delay: u64) -> Self {
         Self {
             mode,
             sequence: colours.to_vec(),
+            fixed: colours[0],
+            delay,
+        }
+    }
+
+    pub fn new_fixed(colour: Pixel) -> Self {
+        Self {
+            mode: ControlMode::Fixed,
+            sequence: Vec::new(),
+            fixed: colour,
+            delay: 100,
         }
     }
 
@@ -27,25 +40,23 @@ impl Controller {
         loop {
             match rx.try_recv() {
                 Err(_) => match self.mode {
-                    ControlMode::Solid => {
-                        lights.set(self.sequence[0]);
+                    ControlMode::Fixed => {
+                        lights.set(self.fixed);
                         lights.update();
-                        thread::sleep(time::Duration::from_millis(100));
                     }
-                    ControlMode::Block(delay) => {
+                    ControlMode::Block => {
                         lights.set(*iter.next().unwrap());
                         lights.update();
-                        thread::sleep(time::Duration::from_millis(delay));
                     }
-                    ControlMode::Individual(delay) => {
+                    ControlMode::Individual => {
                         lights.push(*iter.next().unwrap());
                         lights.update();
-                        thread::sleep(time::Duration::from_millis(delay));
                     }
                 },
                 Ok(c) => return c,
             }
             lights.update();
+            thread::sleep(time::Duration::from_millis(self.delay));
         }
     }
 }
