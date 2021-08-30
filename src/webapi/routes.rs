@@ -49,3 +49,17 @@ fn parse_hex_code(hex: &str) -> Option<Pixel> {
     let b = ((num & 0xff0000) >> 16).try_into().ok()?;
     Some((r, g, b))
 }
+
+//just a few quick tests to make sure hex codes are parsed properly
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[test]
+    fn test() {
+        assert_eq!(WHITE, parse_hex_code("ffffff").unwrap());
+        assert_eq!(RED, parse_hex_code("ff0000").unwrap());
+        assert_eq!(GREEN, parse_hex_code("00ff00").unwrap());
+        assert_eq!(BLUE, parse_hex_code("0000ff").unwrap());
+        assert_eq!((12, 34, 56), parse_hex_code("123456").unwrap());
+    }
+}
