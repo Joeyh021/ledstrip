@@ -3,6 +3,7 @@ use std::convert::TryInto;
 use super::AppState;
 use crate::lights::{colour::*, Pixel};
 use crate::lights::{ControlMode, Controller};
+use rocket::serde::json::Json;
 use rocket::State;
 
 #[get("/on")]
@@ -62,4 +63,10 @@ mod test {
         assert_eq!(BLUE, parse_hex_code("0000ff").unwrap());
         assert_eq!((0x12, 0x34, 0x56), parse_hex_code("123456").unwrap());
     }
+}
+
+#[post("/control", format = "json", data = "<data>")]
+pub fn control(data: Json<Controller>, state: &State<AppState>) -> &'static str {
+    state.tx.send(data.into_inner()).unwrap();
+    "Success!"
 }

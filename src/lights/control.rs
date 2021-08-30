@@ -1,13 +1,18 @@
 use crate::lights::{Pixel, Strip};
+use rocket::serde::{Deserialize, Serialize};
 use std::sync::mpsc::Receiver;
 use std::{thread, time};
 
+#[derive(Serialize, Deserialize)]
+#[serde(crate = "rocket::serde")]
 pub enum ControlMode {
     Fixed,
     Block,
     Individual,
 }
 
+#[derive(Serialize, Deserialize)]
+#[serde(crate = "rocket::serde")]
 pub struct Controller {
     mode: ControlMode,
     sequence: Vec<Pixel>,
