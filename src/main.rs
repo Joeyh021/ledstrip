@@ -6,6 +6,7 @@ extern crate rocket;
 use lights::colour::*;
 use lights::Controller;
 use lights::Strip;
+use rocket::serde::Serialize;
 use webapi::AppState;
 
 use std::sync::mpsc;
@@ -35,7 +36,13 @@ fn start() -> _ {
     rocket::build()
         .mount(
             "/",
-            routes![webapi::on, webapi::off, webapi::rainbow, webapi::set_static],
+            routes![
+                webapi::on,
+                webapi::off,
+                webapi::rainbow,
+                webapi::set_static,
+                webapi::control
+            ],
         )
         .manage(AppState { tx })
 }
