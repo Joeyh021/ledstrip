@@ -16,7 +16,6 @@ pub enum ControlMode {
 pub struct Controller {
     mode: ControlMode,
     sequence: Vec<Pixel>,
-    fixed: Pixel,
     delay: u64,
 }
 
@@ -25,7 +24,6 @@ impl Controller {
         Self {
             mode,
             sequence: colours.to_vec(),
-            fixed: colours[0],
             delay,
         }
     }
@@ -33,8 +31,7 @@ impl Controller {
     pub fn new_fixed(colour: Pixel) -> Self {
         Self {
             mode: ControlMode::Fixed,
-            sequence: Vec::new(),
-            fixed: colour,
+            sequence: vec![colour],
             delay: 100,
         }
     }
@@ -46,7 +43,7 @@ impl Controller {
             match rx.try_recv() {
                 Err(_) => match self.mode {
                     ControlMode::Fixed => {
-                        lights.set(self.fixed);
+                        lights.set(self.sequence[0]);
                         lights.update();
                     }
                     ControlMode::Block => {

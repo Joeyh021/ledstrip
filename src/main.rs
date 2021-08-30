@@ -6,7 +6,6 @@ extern crate rocket;
 use lights::colour::*;
 use lights::Controller;
 use lights::Strip;
-use rocket::serde::Serialize;
 use webapi::AppState;
 
 use std::sync::mpsc;
