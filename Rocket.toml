@@ -3,8 +3,8 @@ address = "0.0.0.0"
 
 [debug]
 port = 8081
-log = "verbose"
+log_level = "verbose"
 
 [release]
 port = 8080
-log = "normal"
+log_level = "normal"
