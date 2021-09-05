@@ -22,8 +22,7 @@ function App() {
 }
 
 function send_colour(colour) {
-  fetch("/on")
-    .then((response) => response.json())
+  fetch("/api/on")
     .then((data) => console.log(data));
 }
 export default App;
