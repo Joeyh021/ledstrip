@@ -6,6 +6,7 @@ extern crate rocket;
 use lights::colour::*;
 use lights::Controller;
 use lights::Strip;
+use rocket::fs::{relative, FileServer};
 use webapi::AppState;
 
 use std::sync::mpsc;
@@ -34,7 +35,7 @@ fn start() -> _ {
 
     rocket::build()
         .mount(
-            "/",
+            "/api",
             routes![
                 webapi::on,
                 webapi::off,
@@ -43,5 +44,6 @@ fn start() -> _ {
                 webapi::control
             ],
         )
+        .mount("/", FileServer::from(relative!("/webapp/build")))
         .manage(AppState { tx })
 }
