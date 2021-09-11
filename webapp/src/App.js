@@ -22,7 +22,8 @@ function App() {
 }
 
 function send_colour(colour) {
-  fetch("/api/on")
-    .then((data) => console.log(data));
+  let route = `/api/colour/${colour.slice(1)}`;
+  //console.log(route);
+  fetch(route).then((data) => console.log(data));
 }
 export default App;
