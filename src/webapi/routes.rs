@@ -1,7 +1,5 @@
-use std::convert::TryInto;
-
 use super::AppState;
-use crate::lights::{colour::*, Pixel};
+use crate::lights::colour::*;
 use crate::lights::{ControlMode, Controller};
 use rocket::serde::json::Json;
 use rocket::State;
@@ -30,9 +28,10 @@ pub fn rainbow(state: &State<AppState>) -> &'static str {
     "Rainbow!"
 }
 
+//sets the lights to the colour in the url
 #[get("/colour/<hex>")]
 pub fn set_static(hex: &str, state: &State<AppState>) -> String {
-    if let Some(col) = parse_hex_code(hex) {
+    if let Some(col) = super::parse_hex_code(hex) {
         state.tx.send(Controller::new_fixed(col)).unwrap();
         format!("Set lights to hex # {}", hex)
     } else {
@@ -40,31 +39,8 @@ pub fn set_static(hex: &str, state: &State<AppState>) -> String {
     }
 }
 
-fn parse_hex_code(hex: &str) -> Option<Pixel> {
-    if hex.len() != 6 {
-        return None;
-    };
-    let num = u32::from_str_radix(hex, 16).ok()?;
-    let b = (num & 0xff).try_into().ok()?;
-    let g = ((num & 0xff00) >> 8).try_into().ok()?;
-    let r = ((num & 0xff0000) >> 16).try_into().ok()?;
-    Some((r, g, b))
-}
-
-//just a few quick tests to make sure hex codes are parsed properly
-#[cfg(test)]
-mod test {
-    use super::*;
-    #[test]
-    fn test() {
-        assert_eq!(WHITE, parse_hex_code("ffffff").unwrap());
-        assert_eq!(RED, parse_hex_code("ff0000").unwrap());
-        assert_eq!(GREEN, parse_hex_code("00ff00").unwrap());
-        assert_eq!(BLUE, parse_hex_code("0000ff").unwrap());
-        assert_eq!((0x12, 0x34, 0x56), parse_hex_code("123456").unwrap());
-    }
-}
-
+//recieves a json object detailing a controller for the lights
+//format is the serde serialisation of the Controller struct
 #[post("/control", format = "json", data = "<data>")]
 pub fn control(data: Json<Controller>, state: &State<AppState>) -> &'static str {
     state.tx.send(data.into_inner()).unwrap();
