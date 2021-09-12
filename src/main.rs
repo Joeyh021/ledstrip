@@ -21,8 +21,8 @@ fn start() -> _ {
     thread::spawn(move || {
         //init lights on the thread because they can't be send/sync
         let mut strip = Strip::new(
-            30,
-            Spi::new(Bus::Spi0, SlaveSelect::Ss0, 6_400_000, Mode::Mode0)
+            180,
+            Spi::new(Bus::Spi1, SlaveSelect::Ss0, 6_400_000, Mode::Mode0)
                 .expect("Could not access SPI device"),
         );
         //default controller
