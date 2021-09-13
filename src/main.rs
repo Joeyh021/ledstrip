@@ -41,7 +41,8 @@ fn start() -> _ {
                 webapi::off,
                 webapi::rainbow,
                 webapi::set_static,
-                webapi::control
+                webapi::control,
+                webapi::fade
             ],
         )
         .mount("/", FileServer::from(relative!("/webapp/build")))

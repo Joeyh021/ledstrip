@@ -1,5 +1,5 @@
 use super::AppState;
-use crate::lights::colour::*;
+use crate::lights::{colour::*, Pixel};
 use crate::lights::{ControlMode, Controller};
 use rocket::serde::json::Json;
 use rocket::State;
@@ -26,6 +26,23 @@ pub fn rainbow(state: &State<AppState>) -> &'static str {
         .send(Controller::new(ControlMode::Individual, &colours, 50))
         .unwrap();
     "Rainbow!"
+}
+
+#[get("/fade")]
+pub fn fade(state: &State<AppState>) -> &'static str {
+    let colours: Vec<Pixel> = (0..256)
+        .map(|g| (255, g, 0))
+        .chain((0..256).rev().map(|r| (r, 255, 0)))
+        .chain((0..256).map(|b| (0, 255, b)))
+        .chain((0..256).rev().map(|g| (0, g, 255)))
+        .chain((0..256).map(|r| (r, 0, 255)))
+        .chain((0..256).rev().map(|b| (255, 0, b)))
+        .collect();
+    state
+        .tx
+        .send(Controller::new(ControlMode::Individual, &colours, 100))
+        .unwrap();
+    "Fading..."
 }
 
 //sets the lights to the colour in the url
