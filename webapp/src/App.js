@@ -22,7 +22,13 @@ class ModeSelect extends React.Component {
   render() {
     return (
       <div class="mode">
-        <button />
+        <button
+          onClick={() =>
+            fetch("/api/rainbow").then((data) => console.log(data))
+          }
+        >
+          Rainbow
+        </button>
         <button />
         <button />
       </div>
