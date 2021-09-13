@@ -29,7 +29,11 @@ class ModeSelect extends React.Component {
         >
           Rainbow
         </button>
-        <button />
+        <button
+          onClick={() => fetch("/api/fade").then((data) => console.log(data))}
+        >
+          Fade
+        </button>
         <button />
       </div>
     );
