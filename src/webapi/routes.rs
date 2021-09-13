@@ -30,13 +30,13 @@ pub fn rainbow(state: &State<AppState>) -> &'static str {
 
 #[get("/fade")]
 pub fn fade(state: &State<AppState>) -> &'static str {
-    let colours: Vec<Pixel> = (0..256)
+    let colours: Vec<Pixel> = (0..=255)
         .map(|g| (255, g, 0))
-        .chain((0..256).rev().map(|r| (r, 255, 0)))
-        .chain((0..256).map(|b| (0, 255, b)))
-        .chain((0..256).rev().map(|g| (0, g, 255)))
-        .chain((0..256).map(|r| (r, 0, 255)))
-        .chain((0..256).rev().map(|b| (255, 0, b)))
+        .chain((0..=255).rev().map(|r| (r, 255, 0)))
+        .chain((0..=255).map(|b| (0, 255, b)))
+        .chain((0..=255).rev().map(|g| (0, g, 255)))
+        .chain((0..=255).map(|r| (r, 0, 255)))
+        .chain((0..=255).rev().map(|b| (255, 0, b)))
         .collect();
     state
         .tx
